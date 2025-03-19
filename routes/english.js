@@ -5,7 +5,22 @@ import { fetcher } from "../utils/index.js";
 const router = express.Router();
 const baseUrl = "https://randomword.com";
 
-const validPos = ['noun', 'verb', 'adjective', 'adverb', 'sentence', 'question', 'idiom', 'letter', 'paragraph', 'vocabulary', '1-word-quotes', '2-word-quotes', '3-word-quotes', 'affirmation'];
+const validPos = [
+  "noun",
+  "verb",
+  "adjective",
+  "adverb",
+  "sentence",
+  "question",
+  "idiom",
+  "letter",
+  "paragraph",
+  "vocabulary",
+  "1-word-quotes",
+  "2-word-quotes",
+  "3-word-quotes",
+  "affirmation",
+];
 
 /**
  * @swagger
@@ -32,15 +47,22 @@ const validPos = ['noun', 'verb', 'adjective', 'adverb', 'sentence', 'question',
  */
 router.get("/", async (req, res) => {
   defaultHeaders(res);
+  const length = parseInt(req.query.length, 10); // Ambil panjang dari query
+
   try {
-    const word = await fetcher({
-      url: baseUrl,
-      container: ".section",
-      containerId: "#shared_section",
-      wordId: "#random_word",
-      definitionId: "#random_word_definition",
-    });
-    res.json(word);
+    let word;
+
+    do {
+      word = await fetcher({
+        url: baseUrl,
+        container: ".section",
+        containerId: "#shared_section",
+        wordId: "#random_word",
+        // definitionId: "#random_word_definition",
+      });
+    } while (!isNaN(length) && word.word.length !== length); // Filter jika panjang di-request
+
+    res.json([word.word]);
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: error.message });
@@ -79,7 +101,7 @@ router.get("/", async (req, res) => {
  */
 router.get("/english/:pos", async (req, res, next) => {
   const partOfSpeech = req.params.pos.toLowerCase();
-  
+
   if (!validPos.includes(partOfSpeech)) {
     return next();
   }
@@ -91,7 +113,7 @@ router.get("/english/:pos", async (req, res, next) => {
       container: ".section",
       containerId: "#shared_section",
       wordId: "#random_word",
-      definitionId: "#random_word_definition",
+      // definitionId: "#random_word_definition",
     });
     res.json(word);
   } catch (error) {

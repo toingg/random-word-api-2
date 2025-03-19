@@ -22,7 +22,7 @@ export const fetcher = async ({
   container = ".section",
   containerId = "#shared_section",
   wordId = "#random_word",
-  definitionId = "#random_word_definition"
+  // definitionId = "#random_word_definition"
 }) => {
   try {
     const response = await axios({
@@ -34,13 +34,13 @@ export const fetcher = async ({
     const $ = cheerio.load(response.data);
     const post = $(`${container} ${containerId}`);
     const word = post.find(wordId).eq(0).text().replace(/[\r\n\t]+/g, "");
-    const definition = post.find(definitionId).eq(0).text().replace("\n", "");
-    const pronounceword = pronounce(word).replace(",", "");
+    // const definition = post.find(definitionId).eq(0).text().replace("\n", "");
+    // const pronounceword = pronounce(word).replace(",", "");
 
     return {
       word: decodeURI(`${word.charAt(0).toUpperCase()}${word.slice(1)}`),
-      definition: decodeURI(`${definition.charAt(0).toUpperCase()}${definition.slice(1)}`),
-      pronunciation: decodeURI(`${pronounceword.charAt(0).toUpperCase()}${pronounceword.slice(1)}`),
+      // definition: decodeURI(`${definition.charAt(0).toUpperCase()}${definition.slice(1)}`),
+      // pronunciation: decodeURI(`${pronounceword.charAt(0).toUpperCase()}${pronounceword.slice(1)}`),
     };
   } catch (error) {
     if (!error.response) {
